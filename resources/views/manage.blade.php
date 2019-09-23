@@ -80,7 +80,7 @@
 
 
       <select  class="form-control" v-model="order.user"  id="add-user" >
-  <option v-for="user in users"     v-bind:value="user.name" >
+  <option v-for="user in users"     v-bind:value="user.id" >
     @{{ user.name }}
   </option>
 </select>
@@ -88,8 +88,8 @@
       </div>
       <div class="form-group">
         <label for="add-product">product</label>
-            <select  class="form-control" v-model="order.product" id="add-user" >
-  <option v-for="product in products" v-bind:value="product.name" >
+            <select  class="form-control" v-model="order.product" id="add-product" >
+  <option v-for="product in products" v-bind:value="product.id" >
     @{{ product.name }}
   </option>
 </select>     
@@ -164,6 +164,7 @@
 </html>
 <!-- partial -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js'></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/vue-router/2.2.1/vue-router.js'></script>
 <script  src="./script.js"></script>
 

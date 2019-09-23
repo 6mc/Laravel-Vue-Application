@@ -21,4 +21,7 @@ Route::get('/manage', function () {
 
 		return view('manage');
 });
+
+Route::post('/addorder','orderController@store');
+
 ?>

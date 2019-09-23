@@ -92,7 +92,21 @@ var Addorder = Vue.extend({
         product: order.product,
         quantity: order.quantity
         // Ajax Response will be the total price and price and date
+
       });
+
+        axios.post('/addorder', {
+        user: order.user,
+        product: order.product,
+        quantity: order.quantity
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
       router.push('/');
     }
   }
