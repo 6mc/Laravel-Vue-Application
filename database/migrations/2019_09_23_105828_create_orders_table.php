@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('product');
             $table->string('price');
             $table->string('quantity');
-            $table->string('total price');
+            $table->string('total_price');
             $table->timestamps();
         });
     }

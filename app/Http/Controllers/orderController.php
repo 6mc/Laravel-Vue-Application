@@ -36,15 +36,15 @@ class orderController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $req =Request::all();
-        $req['price'] = Product::findorFail($req['product'])->price;
-        $req['total_price'] = $req['quantity'] * $req['price'];
-        if ($req['product']=="2" && $req['quantity']>2) {
-            # code...
-            $req['total_price']= $req['total_price']-(($req['total_price']*20)/100);
+  
+       $req =Request::all();
+       $req['price'] = Product::findorFail($req['product'])->price;
+       $req['total_price'] = $req['quantity'] * $req['price'];
+       if ($req['product']=="2" && $req['quantity']>2) {
+           $req['total_price']= $req['total_price']-(($req['total_price']*20)/100);
         }
-        return $req;
+  
+   return Order::create($req);
     }
 
     /**
