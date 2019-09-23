@@ -28,7 +28,9 @@ class orderController extends Controller
     {
         //
        $orders =  Order::all();
-        return view('manage', compact('orders'));
+       $products = Product::all();
+       $users = \App\User::all();
+        return view('manage', compact('orders','users','products'));
       
     }
 

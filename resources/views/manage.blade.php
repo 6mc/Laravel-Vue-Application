@@ -173,26 +173,31 @@
 
 
   var users = [
-  {id: 1, name: 'Mehmet', adress: "World"},
-  {id: 2, name: 'Ali', adress: "Mersin"},
+ @foreach($users as $user)
+  {id: {{$user->id}}, name: '{{$user->name}}' },
+  @endforeach
   {id: 3, name: 'Ayse', adress: "Talinn"}
   ];
 
 var products = [
-  {id: 1, name: 'Coca Cola', price: 100},
+  @foreach($products as $product)
+ {id: {{$product->id}}, name: "{{$product->name}}" },
+  @endforeach
   {id: 2, name: 'Pepsi Cola', price: 100}
   
   ];
 
+
 var orders = [
 @foreach($orders as $order)
-  {id: {{$order->id}}, user: {{$order->user}}, product: {{$order->product}}, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}},  date:"{{$order->created_at}}"},
+  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}},  date:"{{$order->created_at}}"},
 @endforeach
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
   
 orders.pop();
-
+products.pop();
+users.pop();
 
 function findorder (orderId) {
   return orders[findorderKey(orderId)];
@@ -204,6 +209,22 @@ function findorder (orderId) {
 function findorderKey (orderId) {
   for (var key = 0; key < orders.length; key++) {
     if (orders[key].id == orderId) {
+      return key;
+    }
+  }
+};
+
+function finduserKey (userId) {
+  for (var key = 0; key < users.length; key++) {
+    if (users[key].id == userId) {
+      return key;
+    }
+  }
+};
+
+function findproductKey (productId) {
+  for (var key = 0; key < products.length; key++) {
+    if (products[key].id == productId) {
       return key;
     }
   }
