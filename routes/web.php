@@ -14,10 +14,11 @@
 
 
 Route::get('/', function () {
-	     //$items = listing::all();
-        //return view('kesfet', compact('items'));
 		return "Welcome Everyone";
 });
 
+Route::get('/manage', function () {
 
+		return view('manage');
+});
 ?>
