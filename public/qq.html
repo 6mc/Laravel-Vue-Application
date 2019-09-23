@@ -185,13 +185,26 @@ var products = [
   ];
 
 var orders = [
-@foreach($orders as $order)
-  {id: {{$order->id}}, user: {{$order->user}}, product: {{$order->product}}, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}},  date:"{{$order->created_at}}"},
-@endforeach
+  {id: 1, user: 'Mehmet', product: 'Coca Cola', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"},
+  {id: 2, user: 'Alex', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"},
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
   
-orders.pop();
+
+
+// function getdata () {
+//   return axios.get('/showorders')
+//       .then(response => {
+//         this.response = response.data
+//         return this.response
+//       })
+//   }
+
+
+// console.log(getdata()
+//   .then(data => {
+//   window.dat = data;
+//   }));
 
 
 function findorder (orderId) {
@@ -214,17 +227,6 @@ var List = Vue.extend({
     methods: {
       remove (index) {
       orders.splice(findorderKey(index), 1);
-      axios.post('/destroy', {
-      id:index
-    })
-    .then(function (response) {
-     console.log(response);
-    })
-    .catch(function (error) {
-     console.log(error);
-    });
-
-
       }
     },
   data: function () {
@@ -276,7 +278,14 @@ var Addorder = Vue.extend({
   methods: {
     createorder: function() {
       var order = this.order;
-    
+      orders.push({
+        id: Math.random().toString().split('.')[1],
+        user: order.user,
+        product: order.product,
+        quantity: order.quantity
+        // Ajax Response will be the total price and price and date
+
+      });
 
         axios.post('/addorder', {
         user: order.user,
@@ -284,21 +293,7 @@ var Addorder = Vue.extend({
         quantity: order.quantity
       })
       .then(function (response) {
-       
-
-  orders.push({
-        id: Math.random().toString().split('.')[1],
-        user: order.user,
-        product: order.product,
-        quantity: order.quantity,
-        price: response.data.split(",")[0],
-        total: response.data.split(",")[1],
-        date: "now"
-        // Ajax Response will be the total price and price and date
-
-      });
-
-
+        console.log(response);
       })
       .catch(function (error) {
         console.log(error);

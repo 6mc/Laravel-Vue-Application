@@ -6,6 +6,7 @@ use App\Order;
 use App\Product;
 use Request;
 
+
 class orderController extends Controller
 {
     /**
@@ -26,6 +27,9 @@ class orderController extends Controller
     public function create()
     {
         //
+       $orders =  Order::all();
+        return view('manage', compact('orders'));
+      
     }
 
     /**
@@ -42,9 +46,10 @@ class orderController extends Controller
        $req['total_price'] = $req['quantity'] * $req['price'];
        if ($req['product']=="2" && $req['quantity']>2) {
            $req['total_price']= $req['total_price']-(($req['total_price']*20)/100);
+            $req['total_price'] = round($req['total_price'], 2);
         }
-  
-   return Order::create($req);
+   Order::create($req);
+   return $req['price'].",".$req['total_price']; 
     }
 
     /**
@@ -56,6 +61,7 @@ class orderController extends Controller
     public function show(Order $order)
     {
         //
+          return Order::all();
     }
 
     /**
@@ -87,8 +93,11 @@ class orderController extends Controller
      * @param  \App\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy(Order $order,Request $request)
     {
-        //
+        
+        
+       return Order::destroy(Request::all());
+ 
     }
 }

@@ -17,11 +17,19 @@ Route::get('/', function () {
 		return "Welcome Everyone";
 });
 
-Route::get('/manage', function () {
+// Route::get('/manage', function () {
 
-		return view('manage');
+// 		return view('manage');
+// });
+
+Route::get('/test', function () {
+
+		return view('test');
 });
-
 Route::post('/addorder','orderController@store');
 
+Route::get('/showorders','orderController@show');
+Route::get('/manage','orderController@create');
+
+Route::post('/destroy','orderController@destroy');
 ?>
