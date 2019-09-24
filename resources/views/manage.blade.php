@@ -199,6 +199,8 @@ orders.pop();
 products.pop();
 users.pop();
 
+orders= orders.reverse();
+
 function findorder (orderId) {
   return orders[findorderKey(orderId)];
 };
@@ -275,8 +277,8 @@ var orderEdit = Vue.extend({
   methods: {
     updateorder: function () {
            var order = this.order;
-
-orders.splice(findorderKey(order.id), 1);
+var key = findorderKey(order.id);
+orders.splice(key, 1);
 
            axios.post('/edit', {
       id:order.id,
@@ -287,9 +289,9 @@ orders.splice(findorderKey(order.id), 1);
     .then(function (response) {
      console.log(response);
 
+     orders.splice(key, 0, {
 
- orders.push({
-        id: order.id,
+              id: order.id,
         user: users[finduserKey(order.user)].name,
         product: products[findproductKey(order.product)].name,
         quantity: order.quantity,
@@ -297,7 +299,7 @@ orders.splice(findorderKey(order.id), 1);
         total: response.data.split(",")[1],
         date: order.date
 
-      });
+     });
 
     })
     .catch(function (error) {
@@ -330,7 +332,7 @@ var Addorder = Vue.extend({
       .then(function (response) {
        
 
-  orders.push({
+  orders.unshift({
         id: Math.random().toString().split('.')[1],
         user: users[finduserKey(order.user)].name,
         product: products[findproductKey(order.product)].name,
