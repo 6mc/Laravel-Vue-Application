@@ -134,8 +134,8 @@
       </div>
       <div class="form-group">
         <label for="edit-product">Product ( @{{order.product}} )</label>
-                <select  class="form-control" v-model="order.productId" id="edit-product"   >
-  <option v-for="product in products" v-bind:value="product.id" >
+                <select v-bind:value="order.product"   class="form-control" v-model="order.productId"  >
+  <option v-for="product in products"  v-bind:value="product.id" >
     @{{ product.name }}
   </option>
 </select> 
@@ -150,17 +150,6 @@
   </div>
 </template>
 
-<template id="order-delete">
-  <div>
-  <!--   <h2>Delete order @{{ order.user }}</h2>
-    <form v-on:submit="deleteorder">
-      <p>The action cannot be undone.</p>
-      <button type="submit" class="btn btn-danger">Delete</button>
-      <router-link class="btn btn-default" v-bind:to="'/'">Cancel</router-link>
-    </form> -->
-
-  </div>
-</template>
 
 </body>
 </html>
@@ -190,7 +179,7 @@ var products = [
 
 var orders = [
 @foreach($orders as $order)
-  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}}, userId:{{$order->user}}, productId:{{$order->user}} ,  date:"{{$order->created_at}}"},
+  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}}, userId:{{$order->user}}, productId:{{$order->product}} ,  date:"{{$order->created_at}}"},
 @endforeach
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
