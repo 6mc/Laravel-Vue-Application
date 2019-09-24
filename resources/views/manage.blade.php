@@ -293,7 +293,9 @@ orders.splice(key, 1);
 
               id: order.id,
         user: users[finduserKey(order.userId)].name,
+        userId:order.userId,
         product: products[findproductKey(order.productId)].name,
+        productId: order.productId,
         quantity: order.quantity,
         price: response.data.split(",")[0],
         total: response.data.split(",")[1],
