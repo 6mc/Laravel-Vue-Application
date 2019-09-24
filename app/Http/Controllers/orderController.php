@@ -74,7 +74,22 @@ class orderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        $new = Request::all();
+
+        $order = Order::findorFail($new['id']);
+
+        $order['product'] = $new['product'];
+         $order['user'] = $new['user'];
+          $order['quantity'] = $new['quantity'];
+          $order['price']=Product::findorFail($new['product'])->price;
+        $order['total_price']= $order['quantity'] *  $order['price'];
+    
+        if ($order['product']=="2" && $order['quantity']>2) {
+           $order['total_price']= $order['total_price']-(($order['total_price']*20)/100);
+            $order['total_price'] = round($order['total_price'], 2);
+        }
+          $order->save();
+        return $order;
     }
 
     /**

@@ -127,7 +127,7 @@
         <label for="edit-user">User ( @{{order.user}} ) </label>
        
         <select  class="form-control" v-model="order.user" id="edit-user" >
-  <option v-for="user in users" v-bind:value="user.name" >
+  <option v-for="user in users" v-bind:value="user.id" >
     @{{ user.name }}
   </option>
 </select>   
@@ -135,7 +135,7 @@
       <div class="form-group">
         <label for="edit-product">Product ( @{{order.product}} )</label>
                 <select  class="form-control" v-model="order.product" id="edit-product"  >
-  <option v-for="product in products" v-bind:value="product.name" value="order.product"   >
+  <option v-for="product in products" v-bind:value="product.id" >
     @{{ product.name }}
   </option>
 </select> 
@@ -275,13 +275,23 @@ var orderEdit = Vue.extend({
   methods: {
     updateorder: function () {
            var order = this.order;
-      orders[findorderKey(order.id)] = {
-        id: order.id,
-        user: order.user,
-        product: order.product,
-        quantity: order.quantity
-      };
-      router.push('/');
+
+           axios.post('/edit', {
+      id:order.id,
+      user: order.user,
+      product: order.product,
+      quantity: order.quantity
+    })
+    .then(function (response) {
+     console.log(response);
+
+
+    })
+    .catch(function (error) {
+     console.log(error);
+    });
+
+     router.push('/');
     }
   }
 });

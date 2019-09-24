@@ -17,10 +17,6 @@ Route::get('/', function () {
 		return "Welcome Everyone";
 });
 
-// Route::get('/manage', function () {
-
-// 		return view('manage');
-// });
 
 Route::get('/test', function () {
 
@@ -32,4 +28,8 @@ Route::get('/showorders','orderController@show');
 Route::get('/manage','orderController@create');
 
 Route::post('/destroy','orderController@destroy');
+Route::post('/edit','orderController@edit');
+
+
+
 ?>
