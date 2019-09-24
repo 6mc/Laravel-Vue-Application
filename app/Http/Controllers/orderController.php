@@ -89,7 +89,7 @@ class orderController extends Controller
             $order['total_price'] = round($order['total_price'], 2);
         }
           $order->save();
-        return $order;
+       return $order['price'].",".$order['total_price']; 
     }
 
     /**

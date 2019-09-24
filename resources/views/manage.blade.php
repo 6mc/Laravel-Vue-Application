@@ -276,6 +276,8 @@ var orderEdit = Vue.extend({
     updateorder: function () {
            var order = this.order;
 
+orders.splice(findorderKey(order.id), 1);
+
            axios.post('/edit', {
       id:order.id,
       user: order.user,
@@ -286,12 +288,23 @@ var orderEdit = Vue.extend({
      console.log(response);
 
 
+ orders.push({
+        id: order.id,
+        user: users[finduserKey(order.user)].name,
+        product: products[findproductKey(order.product)].name,
+        quantity: order.quantity,
+        price: response.data.split(",")[0],
+        total: response.data.split(",")[1],
+        date: order.date
+
+      });
+
     })
     .catch(function (error) {
      console.log(error);
     });
 
-     router.push('/');
+    router.push('/');
     }
   }
 });
@@ -319,13 +332,12 @@ var Addorder = Vue.extend({
 
   orders.push({
         id: Math.random().toString().split('.')[1],
-        user: order.user,
-        product: order.product,
+        user: users[finduserKey(order.user)].name,
+        product: products[findproductKey(order.product)].name,
         quantity: order.quantity,
         price: response.data.split(",")[0],
         total: response.data.split(",")[1],
         date: "now"
-        // Ajax Response will be the total price and price and date
 
       });
 
