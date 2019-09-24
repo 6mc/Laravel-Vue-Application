@@ -50,8 +50,8 @@ class orderController extends Controller
            $req['total_price']= $req['total_price']-(($req['total_price']*20)/100);
             $req['total_price'] = round($req['total_price'], 2);
         }
-   Order::create($req);
-   return $req['price'].",".$req['total_price']; 
+   $new = Order::create($req);
+   return $new['price'].",".$new['total_price'].",".$new['user'].",".$new['product'].",".$new['id']; 
     }
 
     /**
@@ -77,11 +77,15 @@ class orderController extends Controller
         $new = Request::all();
 
         $order = Order::findorFail($new['id']);
-
+if (!is_string($new['product'])) {
         $order['product'] = $new['product'];
+}
+        if (!is_string($new['user'])) {
+            # code...
          $order['user'] = $new['user'];
+        }
           $order['quantity'] = $new['quantity'];
-          $order['price']=Product::findorFail($new['product'])->price;
+          $order['price']=Product::findorFail($order['product'])->price;
         $order['total_price']= $order['quantity'] *  $order['price'];
     
         if ($order['product']=="2" && $order['quantity']>2) {

@@ -126,7 +126,7 @@
       <div class="form-group">
         <label for="edit-user">User ( @{{order.user}} ) </label>
        
-        <select  class="form-control" v-model="order.user" id="edit-user" >
+        <select   class="form-control" v-model="order.userId" id="edit-user" >        
   <option v-for="user in users" v-bind:value="user.id" >
     @{{ user.name }}
   </option>
@@ -134,7 +134,7 @@
       </div>
       <div class="form-group">
         <label for="edit-product">Product ( @{{order.product}} )</label>
-                <select  class="form-control" v-model="order.product" id="edit-product"  >
+                <select  class="form-control" v-model="order.productId" id="edit-product"   >
   <option v-for="product in products" v-bind:value="product.id" >
     @{{ product.name }}
   </option>
@@ -190,7 +190,7 @@ var products = [
 
 var orders = [
 @foreach($orders as $order)
-  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}},  date:"{{$order->created_at}}"},
+  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}}, userId:{{$order->user}}, productId:{{$order->user}} ,  date:"{{$order->created_at}}"},
 @endforeach
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
@@ -272,7 +272,7 @@ var order = Vue.extend({
 var orderEdit = Vue.extend({
   template: '#order-edit',
   data: function () {
-    return {orders: orders, users: users, products: products, order: findorder(this.$route.params.order_id)};
+    return { orders: orders, users: users, products: products, order: findorder(this.$route.params.order_id)};
   },
   methods: {
     updateorder: function () {
@@ -282,8 +282,8 @@ orders.splice(key, 1);
 
            axios.post('/edit', {
       id:order.id,
-      user: order.user,
-      product: order.product,
+      user: order.userId,
+      product: order.productId,
       quantity: order.quantity
     })
     .then(function (response) {
@@ -292,8 +292,8 @@ orders.splice(key, 1);
      orders.splice(key, 0, {
 
               id: order.id,
-        user: users[finduserKey(order.user)].name,
-        product: products[findproductKey(order.product)].name,
+        user: users[finduserKey(order.userId)].name,
+        product: products[findproductKey(order.productId)].name,
         quantity: order.quantity,
         price: response.data.split(",")[0],
         total: response.data.split(",")[1],
@@ -333,12 +333,14 @@ var Addorder = Vue.extend({
        
 
   orders.unshift({
-        id: Math.random().toString().split('.')[1],
+        id: response.data.split(",")[4],
         user: users[finduserKey(order.user)].name,
         product: products[findproductKey(order.product)].name,
         quantity: order.quantity,
         price: response.data.split(",")[0],
         total: response.data.split(",")[1],
+        userId: response.data.split(",")[2],
+        productId: response.data.split(",")[3],
         date: "now"
 
       });
