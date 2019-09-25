@@ -40,7 +40,7 @@
         <th>Price</th>
         <th>Quantity</th>
         <th>Total</th>
-        <th>Date</th>
+        <th>Date <button v-on:click="change">@{{ date }}</button></th>
         <th class="col-sm-2">Actions</th>
       </tr>
       </thead>
@@ -98,7 +98,7 @@
       </div>
       <div class="form-group">
         <label for="add-quantity">Quantity </span></label>
-        <input type="number" class="form-control" id="add-quantity" v-model="order.quantity"/>
+        <input type="number" class="form-control" id="add-quantity" min="1" v-model="order.quantity"/>
       </div>
       <button type="submit" class="btn btn-primary">Create</button>
       <router-link class="btn btn-default" v-bind:to="'/'">Cancel</router-link>
@@ -224,6 +224,22 @@ function findproductKey (productId) {
 var List = Vue.extend({
   template: '#order-list',
     methods: {
+
+      change(){
+
+        this.date = this.options[this.i++%3];
+
+        if (this.i%3==1) {
+        this.rDate = new Date().getDate() - 7 ;
+    }
+       if (this.i%3==2) {
+        this.rDate = new Date().getDate();
+    }
+       if (this.i%3==0) {
+        this.rDate = 0 ;
+    }
+      },
+
       remove (index) {
       orders.splice(findorderKey(index), 1);
       axios.post('/destroy', {
@@ -240,12 +256,12 @@ var List = Vue.extend({
       }
     },
   data: function () {
-    return {orders: orders, searchKey: ''};
+    return {orders: orders, searchKey: '', date: 'All', options: ['7 days', 'today', 'All'], i:0 , rDate: 0};
   },
   computed: {
     filteredorders: function () {
       return this.orders.filter(function (order) {
-        return this.searchKey=='' || order.user.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1 || order.product.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1;
+        return  ( new Date(order.date).getDate() >= this.rDate  ) && ( this.searchKey=='' ||order.user.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1 || order.product.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1);  
       },this);
     }
   }
@@ -332,7 +348,7 @@ var Addorder = Vue.extend({
         total: response.data.split(",")[1],
         userId: response.data.split(",")[2],
         productId: response.data.split(",")[3],
-        date: "now"
+        date: new Date()
 
       });
 
