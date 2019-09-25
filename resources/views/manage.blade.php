@@ -81,7 +81,7 @@
         <label for="add-user">User</label>
 
 
-      <select  class="form-control" v-model="order.user"  id="add-user" >
+      <select required  class="form-control" v-model="order.user"  id="add-user" >
   <option v-for="user in users"     v-bind:value="user.id" >
     @{{ user.name }}
   </option>
@@ -90,15 +90,15 @@
       </div>
       <div class="form-group">
         <label for="add-product">product</label>
-            <select  class="form-control" v-model="order.product" id="add-product" >
-  <option v-for="product in products" v-bind:value="product.id" >
+            <select required class="form-control" v-model="order.product" id="add-product" >
+  <option  v-for="product in products" v-bind:value="product.id" >
     @{{ product.name }}
   </option>
 </select>     
       </div>
       <div class="form-group">
         <label for="add-quantity">Quantity </span></label>
-        <input type="number" class="form-control" id="add-quantity" min="1" v-model="order.quantity"/>
+        <input required type="number" class="form-control" id="add-quantity" min="1" v-model="order.quantity"/>
       </div>
       <button type="submit" class="btn btn-primary">Create</button>
       <router-link class="btn btn-default" v-bind:to="'/'">Cancel</router-link>
@@ -126,7 +126,7 @@
       <div class="form-group">
         <label for="edit-user">User ( @{{order.user}} ) </label>
        
-        <select   class="form-control" v-model="order.userId" id="edit-user" >        
+        <select required   class="form-control" v-model="order.userId" id="edit-user" >        
   <option v-for="user in users" v-bind:value="user.id" >
     @{{ user.name }}
   </option>
@@ -134,7 +134,7 @@
       </div>
       <div class="form-group">
         <label for="edit-product">Product ( @{{order.product}} )</label>
-                <select v-bind:value="order.product"   class="form-control" v-model="order.productId"  >
+                <select required v-bind:value="order.product"   class="form-control" v-model="order.productId"  >
   <option v-for="product in products"  v-bind:value="product.id" >
     @{{ product.name }}
   </option>
@@ -142,7 +142,7 @@
       </div>
       <div class="form-group">
         <label for="edit-quantity">Quantity ( @{{order.quantity}} )</span></label>
-        <input type="number" class="form-control" id="edit-quantity" v-model="order.quantity"/>
+        <input required min="1" type="number" class="form-control" id="edit-quantity" v-model="order.quantity"/>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
       <router-link class="btn btn-default" v-bind:to="'/'">Cancel</router-link>

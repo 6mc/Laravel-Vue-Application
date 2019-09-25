@@ -26,8 +26,9 @@ class orderController extends Controller
      */
     public function create()
     {
-        //
-       $orders =  Order::all();
+    
+    //   $orders =  Order::orderBy('id', 'desc')->take(5)->get();
+      $orders = Order::all();
        $products = Product::all();
        $users = \App\User::all();
         return view('manage', compact('orders','users','products'));
@@ -42,7 +43,15 @@ class orderController extends Controller
      */
     public function store(Request $request)
     {
-  
+    
+    Request::validate([
+    'user' => 'exists:users,id',
+    'product' => 'exists:products,id',
+    'quantity' => 'min:1',
+]);
+
+
+
        $req =Request::all();
        $req['price'] = Product::findorFail($req['product'])->price;
        $req['total_price'] = $req['quantity'] * $req['price'];
@@ -63,7 +72,7 @@ class orderController extends Controller
     public function show(Order $order)
     {
         //
-          return Order::all();
+          return Order::latest()->paginate(5);
     }
 
     /**
@@ -74,16 +83,18 @@ class orderController extends Controller
      */
     public function edit(Order $order)
     {
+
+    Request::validate([
+    'user' => 'exists:users,id',
+    'product' => 'exists:products,id',
+    'quantity' => 'min:1',
+]);
+
         $new = Request::all();
 
         $order = Order::findorFail($new['id']);
-if (!is_string($new['product'])) {
         $order['product'] = $new['product'];
-}
-        if (!is_string($new['user'])) {
-            # code...
          $order['user'] = $new['user'];
-        }
           $order['quantity'] = $new['quantity'];
           $order['price']=Product::findorFail($order['product'])->price;
         $order['total_price']= $order['quantity'] *  $order['price'];

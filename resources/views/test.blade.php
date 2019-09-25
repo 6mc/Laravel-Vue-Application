@@ -4,7 +4,7 @@
 	<title></title>
 </head>
 <body>
-<form method="POST" action="/edit">
+<form method="POST" action="/addorder">
 	{{ csrf_field() }}
 	<input type="text" name="id">
 	<input type="text" name="user">
