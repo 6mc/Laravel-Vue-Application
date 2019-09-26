@@ -20,8 +20,8 @@ class MainTest extends TestCase
         $this->assertTrue(true);
     }
      /** @test */
-    public function total_price_calculation()
-    {
+    public function total_price_calculation()     // This test checks if the price calculation is correct
+    {											  // Also checks the creation data on the database
      
     	$response = $this->post('addorder', [
         'user' => '1',
@@ -39,7 +39,7 @@ class MainTest extends TestCase
 
 
      /** @test */
-    public function exceptional_stuation_test()
+    public function exceptional_stuation_test()  // Test checks if the exceptional stuation are being done correctly
     {
      
     	$response = $this->post('addorder', [
@@ -57,7 +57,7 @@ class MainTest extends TestCase
     }
 
      /** @test */    
-    public function edit_orders_test()
+    public function edit_orders_test() 		//  Checking if the edits and calculations are correct in database
     {
      
     	$response = $this->post('edit', [
@@ -77,13 +77,17 @@ class MainTest extends TestCase
     }
 
     	/** @test */
-        public function deletion_test()
+        public function deletion_test()   // Asserting that deletions works
     {
-     $id = \App\Order::all()->last()->id;
+     $id = \App\Order::all()->last()->id;  // delete the last added item(s) so Test Database will stay clear and ok
 
-    	$response = $this->post('destroy', [
+    	$response = $this->post('destroy', [ //first deletion
       	'id' => $id
     ]);
+
+    $response = $this->post('destroy', [     //reason of this deletion is, deleting the two records we added above to keep test DB clear
+      	'id' => $id - 1
+    ]);										// I usually run my all tests at once so I didnt hesitate using this 
 
   $this->assertDatabaseMissing('orders', [
     'id' => $id
@@ -93,27 +97,29 @@ class MainTest extends TestCase
 
 
      /** @test */    
-    public function non_existing_user_post()
+    public function non_existing_user_post()    // we want to see if an user with unknown id can  add records with fake product to database
     {
-     
+     	$user = \App\User::all()->last()->id + 10;      // I got 10 more of latest users' id because I want to generate an non existing id
+     	$product = \App\Product::all()->last()->id + 10 ; // and we know that ids are incremental not generated randomly. 
+
     	$response = $this->post('addorder', [
-      	'user' => '3',
-        'product' => '2',
+      	'user' => $user,
+        'product' => $product,
         'quantity' => '1'
     ]);
 
   $this->assertDatabaseMissing('orders', [
-    'user' => '3',
-    'product' => '2',
+    'user' => $user,
+    'product' => $product
     ]);
     }
 
 /** @test */
-public function non_existing_product_edit()
+public function non_existing_product_edit()  // Check if is it possible to edit an order with non existing product id
     {
      
     	$response = $this->post('addorder', [
-    		'id' => '43',
+    	'id' => '43',
       	'user' => '2',
         'product' => '3',
         'quantity' => '0'
@@ -131,9 +137,9 @@ public function non_existing_product_edit()
 
 
 	/** @test */
-	public function display_manage_orders_page()
+	public function display_manage_orders_page() // chech if the manage view returns to user proceeds to /manage
 	{
-	    $response = $this->get('/manage'	);
+	    $response = $this->get('/manage');
 
 	    $response->assertStatus(200);
 	    $response->assertViewIs('manage');
