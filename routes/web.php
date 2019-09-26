@@ -25,10 +25,10 @@ Route::get('/test', function () {
 Route::post('/addorder','orderController@store');
 
 Route::get('/showorders','orderController@show');
-Route::get('/manage','orderController@create');
+Route::get('/manage','orderController@index');
 
 Route::post('/destroy','orderController@destroy');
-Route::post('/edit','orderController@edit');
+Route::post('/edit','orderController@update');
 
 
 
