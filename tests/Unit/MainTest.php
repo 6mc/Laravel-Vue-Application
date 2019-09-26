@@ -59,16 +59,17 @@ class MainTest extends TestCase
      /** @test */    
     public function edit_orders_test() 		//  Checking if the edits and calculations are correct in database
     {
+   $id = 	\App\Order::all()->last()->id -1;
      
     	$response = $this->post('edit', [
-      	'id' => '43',
+      	'id' => $id,
         'user' => '1',
         'product' => '2',
         'quantity' => '300'
     ]);
 
   $this->assertDatabaseHas('orders', [
-    'id' => '43',
+    'id' => $id,
     'user' => '1',
     'product' => '2',
     'quantity' => '300',
@@ -79,7 +80,7 @@ class MainTest extends TestCase
     	/** @test */
         public function deletion_test()   // Asserting that deletions works
     {
-     $id = \App\Order::all()->last()->id;  // delete the last added item(s) so Test Database will stay clear and ok
+     	$id = \App\Order::all()->last()->id;  // delete the last added item(s) so Test Database will stay clear and ok
 
     	$response = $this->post('destroy', [ //first deletion
       	'id' => $id
