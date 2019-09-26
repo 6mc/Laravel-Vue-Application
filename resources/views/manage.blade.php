@@ -156,7 +156,7 @@
       <script src='https://cdnjs.cloudflare.com/ajax/libs/vue-router/2.2.1/vue-router.js'></script>
       <script >
   
-
+  // filling the users array with the data sent from orderController 
 
   var users = [
  @foreach($users as $user)
@@ -165,6 +165,7 @@
   {id: 3, name: 'Ayse', adress: "Talinn"}
   ];
 
+  // filling the products array with the data sent from orderController 
 var products = [
   @foreach($products as $product)
  {id: {{$product->id}}, name: "{{$product->name}}" },
@@ -172,7 +173,7 @@ var products = [
   {id: 2, name: 'Pepsi Cola', price: 100}
   
   ];
-
+ // filling the orders array with the data sent from orderController 
 
 var orders = [
 @foreach($orders as $order)
@@ -181,20 +182,24 @@ var orders = [
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
   
-orders.pop();
+
+
+orders.pop();  //removing the dummy elements in  arrays  
 products.pop();
 users.pop();
 
-orders= orders.reverse();
-
-function findorder (orderId) {
-  return orders[findorderKey(orderId)];
-};
+orders= orders.reverse();  //reversing  array to see latest added orders first
 
 
 
+function findorder (orderId) {                // this functions will be used because,  data in the database stored as ids not names
+  return orders[findorderKey(orderId)];       // example data: id:42, user: 1, product: 2, price... -> order stores the user's id not his/her name
+};                                            // returns element from id 
 
-function findorderKey (orderId) {
+
+
+
+function findorderKey (orderId) {                   //returns key from id
   for (var key = 0; key < orders.length; key++) {
     if (orders[key].id == orderId) {
       return key;
@@ -202,7 +207,7 @@ function findorderKey (orderId) {
   }
 };
 
-function finduserKey (userId) {
+function finduserKey (userId) {                   
   for (var key = 0; key < users.length; key++) {
     if (users[key].id == userId) {
       return key;
@@ -218,28 +223,28 @@ function findproductKey (productId) {
   }
 };
 
-var List = Vue.extend({
+var List = Vue.extend({                         //this is  vue template to list orders
   template: '#order-list',
     methods: {
 
-      change(){
+      change(){                                 // this method is being used for filtering orders by date
 
-        this.date = this.options[this.i++%3];
+        this.date = this.options[this.i++%3];    // change  text to next element e.g. last 7 days -> today
 
         if (this.i%3==1) {
-        this.rDate = new Date().getDate() - 7 ;
-    }
+        this.rDate = new Date().getDate() - 7 ;   // we will see the orders that have greater date value than the reference Date 
+    }                                             //  so in this if state  reference date is today - 7 days, because we want last 7 days
        if (this.i%3==2) {
-        this.rDate = new Date().getDate();
+        this.rDate = new Date().getDate();        // reference date is today which will show us orders only added today
     }
        if (this.i%3==0) {
-        this.rDate = 0 ;
+        this.rDate = 0 ;                        // reference date is 0 which is lower than all date value so it will show us all orders
     }
       },
 
-      remove (index) {
-      orders.splice(findorderKey(index), 1);
-      axios.post('/destroy', {
+      remove (index) {                          //this is the function that work when we click on delete button
+      orders.splice(findorderKey(index), 1);   // deletes order from orders array, so it will be deleted from the screen
+      axios.post('/destroy', {                  //sending id of order that we want to delete, to destroy route and it will be deleted from DB too
       id:index
     })
     .then(function (response) {
@@ -252,37 +257,32 @@ var List = Vue.extend({
 
       }
     },
-  data: function () {
+  data: function () {  //  datas which are used in this template
     return {orders: orders, searchKey: '', date: 'All', options: ['7 days', 'today', 'All'], i:0 , rDate: 0};
   },
-  computed: {
-    filteredorders: function () {
-      return this.orders.filter(function (order) {
+  computed: {       // this is  filtering system
+    filteredorders: function () {     //  view gets orders from filteredorders, not orders.
+      return this.orders.filter(function (order) {  //so this anoymous function will return data by date and(&&) keywords
         return  ( new Date(order.date).getDate() >= this.rDate  ) && ( this.searchKey=='' ||order.user.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1 || order.product.toLowerCase().indexOf(this.searchKey.toLowerCase()) !== -1);  
       },this);
     }
   }
 });
 
-var order = Vue.extend({
-  template: '#order',
-  data: function () {
-    return {order: findorder(this.$route.params.order_id)};
-  }
-});
 
-var orderEdit = Vue.extend({
+
+var orderEdit = Vue.extend({    // this is the vue template that show us edit screen
   template: '#order-edit',
-  data: function () {
+  data: function () {   // datas that we will use on edit
     return { orders: orders, users: users, products: products, order: findorder(this.$route.params.order_id)};
   },
   methods: {
-    updateorder: function () {
-           var order = this.order;
-var key = findorderKey(order.id);
-orders.splice(key, 1);
+    updateorder: function () {           // function that will run when the save button clicked after edits done
+           var order = this.order;      //  order object is sent by vue routes as params 
+var key = findorderKey(order.id);       // we find  order and delete 
+orders.splice(key, 1);                    
 
-           axios.post('/edit', {
+           axios.post('/edit', {    // here we are sending a post request to  edit route which will run edit function in  controller
       id:order.id,
       user: order.userId,
       product: order.productId,
@@ -291,16 +291,15 @@ orders.splice(key, 1);
     .then(function (response) {
      console.log(response);
 
-     orders.splice(key, 0, {
-
-              id: order.id,
+     orders.splice(key, 0, {              // after we make sure that we have the data edited in DB we are creating new object in  orders with 
+              id: order.id,               // values we sent to database
         user: users[finduserKey(order.userId)].name,
-        userId:order.userId,
+        userId:order.userId,                                  //splice will create data on screen on  where it used to be so sort wont change
         product: products[findproductKey(order.productId)].name,
         productId: order.productId,
         quantity: order.quantity,
-        price: response.data.split(",")[0],
-        total: response.data.split(",")[1],
+        price: response.data.split(",")[0],               // here price and total price sent us from server 
+        total: response.data.split(",")[1],               // calculations on client-side are risky and manipulative   
         date: order.date
 
      });
@@ -310,7 +309,7 @@ orders.splice(key, 1);
      console.log(error);
     });
 
-    router.push('/');
+    router.push('/');               
     }
   }
 });
@@ -318,7 +317,7 @@ orders.splice(key, 1);
 
 
 
-var Addorder = Vue.extend({
+var Addorder = Vue.extend({         // the template we use to add orders 
   template: '#add-order',
   data: function () {
     return {order: {user: '', product: '', quantity: ''},users: users, products:products}
@@ -328,21 +327,21 @@ var Addorder = Vue.extend({
       var order = this.order;
     
 
-        axios.post('/addorder', {
+        axios.post('/addorder', {  // sending post request to addorder route so it will add  data to database using  controller
         user: order.user,
         product: order.product,
         quantity: order.quantity
       })
-      .then(function (response) {
+      .then(function (response) { //  we make sure that our data received by server
        
-
-  orders.unshift({
+        // used unshift instead of push because I want to add it to top of the list  
+  orders.unshift({                //  adding  new order to  order array so it will be shown on the screen
         id: response.data.split(",")[4],
         user: users[finduserKey(order.user)].name,
         product: products[findproductKey(order.product)].name,
         quantity: order.quantity,
-        price: response.data.split(",")[0],
-        total: response.data.split(",")[1],
+        price: response.data.split(",")[0],         // also here price and total price calculated in server and returned to us as a response
+        total: response.data.split(",")[1],         
         userId: response.data.split(",")[2],
         productId: response.data.split(",")[3],
         date: new Date()
@@ -363,11 +362,9 @@ var Addorder = Vue.extend({
 
 
 var router = new VueRouter({routes:[
-  { path: '/', component: List},
-  { path: '/order/:order_id', component: order, user: 'order'},
+  { path: '/', component: List},                              //vue routes 
   { path: '/add-order', component: Addorder},
   { path: '/order/:order_id/edit', component: orderEdit, name: 'order-edit'}
-//  { path: '/order/:order_id/delete', component: orderDelete, user: 'order-delete'}
 ]});
 app = new Vue({
 
