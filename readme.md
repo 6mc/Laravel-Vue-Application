@@ -380,7 +380,7 @@ public function non_existing_product_edit()  // Check if is it possible to edit 
 ```
 ### Bugs & Scale Problems
 - Date's day number gets value only in between 0-31 so start of every month Date filtering won't work correctly.
-- When a new order added, its time value is different than others make them all in same format.
+- When a new order added, its time value format is different than others make them all in same format.
 - Users only needs to be sended to client when add or edit function called by client it may reduce the load on server side <- listing orders will be problem in this case server-side reorganizations will be needed
 - Using an external Database and let it do the calculations will reduce load as well
 - Pagination and Filtering on server-side might be needed in case of large scale data recorded
