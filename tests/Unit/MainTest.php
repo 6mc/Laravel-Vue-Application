@@ -59,7 +59,7 @@ class MainTest extends TestCase
      /** @test */    
     public function edit_orders_test() 		//  Checking if the edits and calculations are correct in database
     {
-   $id = 	\App\Order::all()->last()->id -1;
+  		$id = 	\App\Order::all()->last()->id -1;
      
     	$response = $this->post('edit', [
       	'id' => $id,
