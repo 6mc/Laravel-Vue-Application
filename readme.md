@@ -12,7 +12,7 @@
 - [Delete](#Delete)
 - [Keyword & Date Filter](#Filters)
 - [Tests](#Tests)
-- [Bugs](#Bugs-&-Scale-Problems)
+- [Bugs](#bugs--scale-problems)
 
 ## About Project 
 Project is currenly live on [mhmt.gq/manage](http://mhmt.gq/manage)
