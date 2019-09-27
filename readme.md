@@ -12,7 +12,7 @@
 - [Delete](#Delete)
 - [Keyword & Date Filter](#Filters)
 - [Tests](#Tests)
-
+- [Bugs](#Bugs-&-Scale-Problems)
 
 ## About Project 
 Project is currenly live on [mhmt.gq/manage](http://mhmt.gq/manage)
@@ -38,7 +38,7 @@ And for CRUD functions to Server-Side I used Ajax requests with Axios. Also I in
 |updated_at||updated_at|
 
 ### Database Notes
-- in orders table, product and user field are storing ids' of them. Not the names
+- in orders table, product and user field are storing IDs' of them. Not the names
 - price is constant that stores the price of product when the order created  and total_price field are being calculated in controller. It could be also auto calculated in Model or in Database. 
 
  ## Add
@@ -204,7 +204,7 @@ orders.splice(key, 1);
 I use toLowerCase function because I want my search to be case insensitive
 then I use indexOf function to see if any order's user has any part of my searchkey if there's no match it will return -1 so,  if not equals to -1 it matches
 -  Done same thing for the product
-#####  *But in orders field we just have bunch of IDs, How can we match ids with keywords  ?*
+#####  *But in orders field we just have bunch of IDs, How can we match IDs with keywords  ?*
 ##### -  *That's Right, so to prevent that data mismatch, In orders array we have both IDs and names as data unlike its database field*
 ```php
 @foreach($orders as $order)
@@ -333,7 +333,7 @@ then I use indexOf function to see if any order's user has any part of my search
     public function non_existing_user_post()    // we want to see if an user with unknown id can  add records with fake product to database
     {
      	$user = \App\User::all()->last()->id + 10;      // I got 10 more of latest users' id because I want to generate an non existing id
-     	$product = \App\Product::all()->last()->id + 10 ; // and we know that ids are incremental not generated randomly. 
+     	$product = \App\Product::all()->last()->id + 10 ; // and we know that IDs are incremental not generated randomly. 
 
     	$response = $this->post('addorder', [
       	'user' => $user,
