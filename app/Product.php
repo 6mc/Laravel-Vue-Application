@@ -11,6 +11,16 @@ class Product extends Model
 
 
     protected $fillable = [
-        'name', 'price',  'photo', 'brand', 'description'
+        'name', 'price',  'photo', 'description'
     ];
+
+
+
+        public function orders()
+    {
+        return $this->hasMany('App\Order', 'product');
+    }
+
+
+
 }

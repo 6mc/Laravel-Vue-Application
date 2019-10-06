@@ -13,6 +13,14 @@ class Order extends Model
         'user', 'product', 'price' ,  'quantity', 'total_price'
     ];
 
+    public function User()
+    {
+        return $this->belongsTo('App\User','id', 'user');
+    }
 
+        public function Product()
+    {
+        return $this->belongsTo('App\Product','id', 'product');
+    }
 
 }
