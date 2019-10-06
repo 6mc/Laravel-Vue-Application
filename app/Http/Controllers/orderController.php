@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 use App\Order;
 use App\Product;
-use Request;
+//use Request;
+use App\Http\Requests\orderRequest;
+
 class orderController extends Controller {
     /**
      * Display a listing of the resource.
@@ -29,17 +31,10 @@ class orderController extends Controller {
      * then we calculate total price of order and assign it to total price attribute
      *
      */
-    public function store(Request $request) {
-        Request::validate(['user' => 'exists:users,id', 'product' => 'exists:products,id', 'quantity' => 'min:1', ]);
-        $req = Request::all();
-        $req['price'] = Product::findorFail($req['product'])->price;
-        $req['total_price'] = $req['quantity'] * $req['price'];
-        if ($req['product'] == "2" && $req['quantity'] > 2) {                        // checking if exceptional stuation takes place
-            $req['total_price'] = $req['total_price'] - (($req['total_price'] * 20) / 100); //if yes, 20% discount on total price is being applied
-            $req['total_price'] = round($req['total_price'], 2);                        // and we don't want long digits after points 
-        }
-        $new = Order::create($req);                                                     // creating our order into database
-        return $new['price'] . "," . $new['total_price'] . "," . $new['user'] . "," . $new['product'] . "," . $new['id'];   // values to client  
+    public function store(orderRequest $request) {
+        $request->calc();
+        $new = Order::create($request->all());                                                     // creating our order into database
+       return $new['price'] . "," . $new['total_price'] . "," . $new['user'] . "," . $new['product'] . "," . $new['id'];   // values to client  
     }
 
 
@@ -55,20 +50,15 @@ class orderController extends Controller {
      *
      *
      */
-    public function update(Request $request, Order $order) {
+    public function update(orderRequest $request, Order $order) {
 
-        Request::validate(['id' => 'exists:orders,id','user' => 'exists:users,id', 'product' => 'exists:products,id', 'quantity' => 'min:1', ]);
-        $new = Request::all();
+        $new = $request->calc()->all();
         $order = Order::findorFail($new['id']);             
         $order['product'] = $new['product'];            
         $order['user'] = $new['user'];            
         $order['quantity'] = $new['quantity'];
-        $order['price'] = Product::findorFail($order['product'])->price;  // getting the price of new data 
-        $order['total_price'] = $order['quantity'] * $order['price'];     // Recalculating the total prices  
-        if ($order['product'] == "2" && $order['quantity'] > 2) {         // 
-            $order['total_price'] = $order['total_price'] - (($order['total_price'] * 20) / 100);
-            $order['total_price'] = round($order['total_price'], 2);
-        }
+        $order['price'] = $new['price'];
+        $order['total_price'] = $new['total_price']; 
         $order->save();
         return $order['price'] . "," . $order['total_price'];              // Return of new price and  Recalculated Total price
     }
@@ -78,7 +68,7 @@ class orderController extends Controller {
      * @param  \App\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order, Request $request) {
-        return Order::destroy(Request::all());                            // Destroy the data with requested id              
+    public function destroy(Order $order, orderRequest $request) {
+        return Order::destroy($request->all());                            // Destroy the data with requested id              
     }
 }

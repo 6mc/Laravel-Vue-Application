@@ -177,7 +177,7 @@ var products = [
 
 var orders = [
 @foreach($orders as $order)
-  {id: {{$order->id}}, user: users[finduserKey({{$order->user}})].name, product: products[findproductKey({{$order->product}})].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}}, userId:{{$order->user}}, productId:{{$order->product}} ,  date:"{{$order->created_at}}"},
+  {id: {{$order->id}}, user: users[findKey({{$order->user}}, users)].name, product: products[findKey({{$order->product}}, products)].name, price: {{$order->price}}, quantity: {{$order->quantity}}, total:{{$order->total_price}}, userId:{{$order->user}}, productId:{{$order->product}} ,  date:"{{$order->created_at}}"},
 @endforeach
   {id: 3, user: 'Diego', product: 'Superheroic JavaScript MVW Framework.', price: 100, quantity: 1, total:100,  date:"21.09.2019 18:00"}
 ];
@@ -193,35 +193,23 @@ orders= orders.reverse();  //reversing  array to see latest added orders first
 
 
 function findorder (orderId) {                // this functions will be used because,  data in the database stored as ids not names
-  return orders[findorderKey(orderId)];       // example data: id:42, user: 1, product: 2, price... -> order stores the user's id not his/her name
-};                                            // returns element from id 
+  return orders[findKey(orderId, orders)];       // example data: id:42, user: 1, product: 2, price... -> order stores the user's id not his/her name
+};                                            
 
 
 
 
-function findorderKey (orderId) {                   //returns key from id
-  for (var key = 0; key < orders.length; key++) {
-    if (orders[key].id == orderId) {
+function findKey(Id, array)       // returns element from id 
+{
+for (var key = 0; key < array.length; key++) {
+    if (array[key].id == Id) {
       return key;
     }
   }
 };
 
-function finduserKey (userId) {                   
-  for (var key = 0; key < users.length; key++) {
-    if (users[key].id == userId) {
-      return key;
-    }
-  }
-};
 
-function findproductKey (productId) {
-  for (var key = 0; key < products.length; key++) {
-    if (products[key].id == productId) {
-      return key;
-    }
-  }
-};
+
 
 var List = Vue.extend({                         //this is  vue template to list orders
   template: '#order-list',
@@ -243,7 +231,7 @@ var List = Vue.extend({                         //this is  vue template to list 
       },
 
       remove (index) {                          //this is the function that work when we click on delete button
-      orders.splice(findorderKey(index), 1);   // deletes order from orders array, so it will be deleted from the screen
+      orders.splice(findKey(index, orders), 1);   // deletes order from orders array, so it will be deleted from the screen
       axios.post('/destroy', {                  //sending id of order that we want to delete, to destroy route and it will be deleted from DB too
       id:index
     })
@@ -279,7 +267,7 @@ var orderEdit = Vue.extend({    // this is the vue template that show us edit sc
   methods: {
     updateorder: function () {           // function that will run when the save button clicked after edits done
            var order = this.order;      //  order object is sent by vue routes as params 
-var key = findorderKey(order.id);       // we find  order and delete 
+var key = findKey(order.id,orders);       // we find  order and delete 
 orders.splice(key, 1);                    
 
            axios.post('/edit', {    // here we are sending a post request to  edit route which will run edit function in  controller
@@ -293,9 +281,9 @@ orders.splice(key, 1);
 
      orders.splice(key, 0, {              // after we make sure that we have the data edited in DB we are creating new object in  orders with 
               id: order.id,               // values we sent to database
-        user: users[finduserKey(order.userId)].name,
+        user: users[findKey(order.userId,users)].name,
         userId:order.userId,                                  //splice will create data on screen on  where it used to be so sort wont change
-        product: products[findproductKey(order.productId)].name,
+        product: products[findKey(order.productId, products)].name,
         productId: order.productId,
         quantity: order.quantity,
         price: response.data.split(",")[0],               // here price and total price sent us from server 
@@ -337,8 +325,8 @@ var Addorder = Vue.extend({         // the template we use to add orders
         // used unshift instead of push because I want to add it to top of the list  
   orders.unshift({                //  adding  new order to  order array so it will be shown on the screen
         id: response.data.split(",")[4],
-        user: users[finduserKey(order.user)].name,
-        product: products[findproductKey(order.product)].name,
+        user: users[findKey(order.user, users)].name,
+        product: products[findKey(order.product, products)].name,
         quantity: order.quantity,
         price: response.data.split(",")[0],         // also here price and total price calculated in server and returned to us as a response
         total: response.data.split(",")[1],         

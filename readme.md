@@ -12,7 +12,7 @@
 - [Delete](#Delete)
 - [Keyword & Date Filter](#Filters)
 - [Tests](#Tests)
-- [Bugs](#bugs--scale-problems)
+- [Bugs](#bugs--Improvements)
 
 ## About Project 
 Project is currenly live on [mhmt.gq/manage](http://mhmt.gq/manage)
@@ -378,7 +378,7 @@ public function non_existing_product_edit()  // Check if is it possible to edit 
 	    $response->assertViewIs('manage');
 	}
 ```
-### Bugs & Scale Problems
+### Bugs & Improvements
 - Date's day number gets value only in between 0-31 so start of every month Date filtering won't work correctly.
 - When a new order added, its time value format is different than others make them all in same format.
 - Users only needs to be sended to client when add or edit function called by client it may reduce the load on server side <- listing orders will be problem in this case server-side reorganizations will be needed
