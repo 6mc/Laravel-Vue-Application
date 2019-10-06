@@ -44,26 +44,16 @@ And for CRUD functions to Server-Side I used Ajax requests with Axios. Also I in
  ## Add
  ### server-side
 - app\Http\Controllers\orderController.php
- - First I validate the Request 
- -  I get the price
- - Calculate the total price 
- - check if exceptional stuation takes place
  - Add Request to Database
  - Return price total price and id  values to client
 ```PHP
 
-public function store(Request $request) {
-        Request::validate(['user' => 'exists:users,id', 'product' => 'exists:products,id', 'quantity' => 'min:1', ]);
-        $req = Request::all();
-        $req['price'] = Product::findorFail($req['product'])->price;
-        $req['total_price'] = $req['quantity'] * $req['price'];
-        if ($req['product'] == "2" && $req['quantity'] > 2) {                        // checking if exceptional stuation takes place
-            $req['total_price'] = $req['total_price'] - (($req['total_price'] * 20) / 100); //if yes, 20% discount on total price is being applied
-            $req['total_price'] = round($req['total_price'], 2);                        // and we don't want long digits after points 
-        }
-        $new = Order::create($req);                                                     // creating our order into database
-        return $new['price'] . "," . $new['total_price'] . "," . $new['user'] . "," . $new['product'] . "," . $new['id'];   // values to client  
-    }'
+  public function store(orderRequest $request) {
+        $request->calc();             // calculations done on request class
+        $new = Order::create($request->all());                                                     // creating our order into database
+       return $new['price'] . "," . $new['total_price'] . "," . $new['user'] . "," . $new['product'] . "," . $new['id'];   // values to client  
+    }
+
 ```
 
  ### client-side
@@ -85,8 +75,8 @@ public function store(Request $request) {
         // used unshift instead of push because I want to add it to top of the list  
   orders.unshift({                //  adding  new order to  order array so it will be shown on the screen
         id: response.data.split(",")[4],
-        user: users[finduserKey(order.user)].name,
-        product: products[findproductKey(order.product)].name,
+        user: users[findKey(order.user,users)].name,
+        product: products[findKey(order.product,products)].name,
         quantity: order.quantity,
         price: response.data.split(",")[0],         // also here price and total price calculated in server and returned to us as a response
         total: response.data.split(",")[1],         
@@ -103,24 +93,17 @@ public function store(Request $request) {
 ## Edit 
 ### server-side
 - app\Http\Controllers\orderController.php
-- Very similar to addition function
-- Getting the model using id in Request
 - Return new price and total price values
 ```PHP
-    public function update(Request $request, Order $order) {
+    public function update(orderRequest $request, Order $order) {
 
-        Request::validate(['id' => 'exists:orders,id','user' => 'exists:users,id', 'product' => 'exists:products,id', 'quantity' => 'min:1', ]);
-        $new = Request::all();
+        $new = $request->calc()->all();           // Price Calculations
         $order = Order::findorFail($new['id']);             
         $order['product'] = $new['product'];            
         $order['user'] = $new['user'];            
         $order['quantity'] = $new['quantity'];
-        $order['price'] = Product::findorFail($order['product'])->price;  // getting the price of new data 
-        $order['total_price'] = $order['quantity'] * $order['price'];     // Recalculating the total prices  
-        if ($order['product'] == "2" && $order['quantity'] > 2) {         // 
-            $order['total_price'] = $order['total_price'] - (($order['total_price'] * 20) / 100);
-            $order['total_price'] = round($order['total_price'], 2);
-        }
+        $order['price'] = $new['price'];
+        $order['total_price'] = $new['total_price']; 
         $order->save();
         return $order['price'] . "," . $order['total_price'];              // Return of new price and  Recalculated Total price
     }
@@ -147,9 +130,9 @@ orders.splice(key, 1);
 
      orders.splice(key, 0, {              // after we make sure that we have the data edited in DB we are creating new object in  orders with 
               id: order.id,               // values we sent to database
-        user: users[finduserKey(order.userId)].name,
+        user: users[findKey(order.userId,users)].name,
         userId:order.userId,                                  //splice will create data on screen on  where it used to be so sort wont change
-        product: products[findproductKey(order.productId)].name,
+        product: products[findKey(order.productId,products)].name,
         productId: order.productId,
         quantity: order.quantity,
         price: response.data.split(",")[0],               // here price and total price sent us from server 
@@ -175,7 +158,7 @@ orders.splice(key, 1);
 - Post request to /destroy route using id as data
 ```JavaScript
       remove (index) {                          //this is the function that work when we click on delete button
-      orders.splice(findorderKey(index), 1);   // deletes order from orders array, so it will be deleted from the screen
+      orders.splice(findKey(index,orders), 1);   // deletes order from orders array, so it will be deleted from the screen
       axios.post('/destroy', {                  //sending id of order that we want to delete, to destroy route and it will be deleted from DB too
       id:index
     })
@@ -382,7 +365,6 @@ public function non_existing_product_edit()  // Check if is it possible to edit 
 - Date's day number gets value only in between 0-31 so start of every month Date filtering won't work correctly.
 - When a new order added, its time value format is different than others make them all in same format.
 - Users only needs to be sended to client when add or edit function called by client it may reduce the load on server side <- listing orders will be problem in this case server-side reorganizations will be needed
-- Using an external Database and let it do the calculations will reduce load as well
 - Pagination and Filtering on server-side might be needed in case of large scale data recorded
 
 "Thanks for your precious time"
